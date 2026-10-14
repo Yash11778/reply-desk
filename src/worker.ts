@@ -28,6 +28,9 @@ async function load(webgpu: boolean) {
     // q4f16 needs WebGPU's fp16. The 4-bit builds also use GatherBlockQuantized,
     // which onnxruntime-web's WASM backend doesn't implement, so the CPU path runs int8.
     dtype: webgpu ? 'q4f16' : 'int8',
+    // The repo's config says "model*" weights live in one external data file, but
+    // the int8 build is a single self-contained .onnx. Say so, or it 404s on _data.
+    use_external_data_format: { 'model_int8.onnx': 0, 'model.onnx': 2, model: 1 },
     progress_callback: (p: { status: string; file?: string; loaded?: number; total?: number }) => {
       if (p.status !== 'progress' || !p.file || !p.total) return;
       files.set(p.file, { loaded: p.loaded ?? 0, total: p.total });
@@ -42,6 +45,12 @@ async function load(webgpu: boolean) {
   })) as TextGenerationPipeline;
   post({ type: 'ready', device });
 }
+
+// Some load failures reject inside the library without reaching our await.
+// Surface them, or the page sits on "Starting the model…" forever.
+self.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
+  post({ type: 'error', message: e.reason instanceof Error ? e.reason.message : String(e.reason) });
+});
 
 self.onmessage = async (e: MessageEvent<WorkerIn>) => {
   const msg = e.data;

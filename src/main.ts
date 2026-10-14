@@ -126,8 +126,10 @@ async function run() {
     renderCards();
 
     for (const [i, card] of cards.entries()) {
-      status(`Reading review ${i + 1} of ${cards.length} on your ${modelLabel}…`);
-      card.mood = await classify(card.review);
+      status(`Reading review ${i + 1} of ${cards.length} on your ${modelLabel}${modelLabel === 'CPU' && !crossOriginIsolated ? ' (single thread)' : ''}…`);
+      // A food-safety or rude-staff complaint is never a happy review, and skipping
+      // the model call here saves a round on slow CPUs.
+      card.mood = card.urgent ? 'negative' : await classify(card.review);
       renderCards();
       card.reply = await draftReply(card.review, card.mood, business);
       card.busy = false;
