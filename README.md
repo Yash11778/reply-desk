@@ -44,7 +44,7 @@ npm run dev
 
 It uses [Transformers.js](https://huggingface.co/docs/transformers.js) with
 `onnx-community/gemma-3-1b-it-ONNX`: WebGPU when the browser has it, otherwise WebAssembly
-on the CPU (slower, about 10 s a reply, but it works everywhere). The weights (~800 MB)
+on the CPU (slower, about 10 s a reply, but it works everywhere). The weights (~800 MB–1 GB)
 download once and are cached by the browser.
 
 ## License

@@ -78,7 +78,7 @@ async function render() {
         </div>
         <textarea id="reviews" rows="8" placeholder="Paste reviews here, with a blank line between each one."></textarea>
         <button class="primary" id="go">Draft replies</button>
-        <p class="status" id="status" role="status">${gpu ? 'Runs on your GPU.' : 'No WebGPU here, so it runs on your CPU: slower (about 10 s a reply) but it works.'} The first run downloads Gemma 3 1B once (~800 MB); after that it works offline.</p>
+        <p class="status" id="status" role="status">${gpu ? 'Runs on your GPU.' : 'No WebGPU here, so it runs on your CPU: slower (about 10 s a reply) but it works.'} The first run downloads Gemma 3 1B once (~800 MB–1 GB); after that it works offline.</p>
       </section>
 
       <section id="results"></section>

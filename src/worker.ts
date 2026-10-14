@@ -25,8 +25,9 @@ async function load(webgpu: boolean) {
   const device = webgpu ? 'webgpu' : 'wasm';
   gen = (await pipeline('text-generation', MODEL, {
     device,
-    // q4f16 needs WebGPU's fp16; the CPU build runs plain q4.
-    dtype: webgpu ? 'q4f16' : 'q4',
+    // q4f16 needs WebGPU's fp16. The 4-bit builds also use GatherBlockQuantized,
+    // which onnxruntime-web's WASM backend doesn't implement, so the CPU path runs int8.
+    dtype: webgpu ? 'q4f16' : 'int8',
     progress_callback: (p: { status: string; file?: string; loaded?: number; total?: number }) => {
       if (p.status !== 'progress' || !p.file || !p.total) return;
       files.set(p.file, { loaded: p.loaded ?? 0, total: p.total });
