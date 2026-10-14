@@ -23,13 +23,24 @@ const TASK: Record<Mood, (b: Business) => string> = {
     `Apologise once, without excuses, and ask them to contact you ${b.contact ? `on ${b.contact}` : 'directly'} so you can make it right.`,
 };
 
+/**
+ * Words that signal any complaint at all. A review with none of them is positive,
+ * and the model isn't asked: the CPU (int8) build in particular tends to hedge
+ * with "mixed" on reviews that are plainly happy.
+ */
+const COMPLAINT =
+  /\b(but|though|however|although|except|not|no|never|bad|worst|poor|cold|soggy|stale|slow|late|wait(ed|ing)?|rude|dirty|unclean|expensive|overpriced|tiny|bland|salty|oily|burnt|raw|wrong|missing|disappoint\w*|average|okay|ok|meh)\b|n't\b/i;
+
+export const hasComplaint = (review: string) => COMPLAINT.test(review);
+
 export async function classify(review: string): Promise<Mood> {
+  if (!hasComplaint(review)) return 'positive';
   const answer = await ask(
-    `Is this customer review positive, mixed, or negative? Mixed means it has both praise and a complaint. Answer with one word.\n\nReview: "${review}"`,
+    `This customer review contains a complaint. Is it mixed (it also praises something) or negative (no praise at all)? Answer with one word.\n\nReview: "${review}"`,
     4,
   );
   const word = answer.toLowerCase().replace(/[^a-z]/g, '');
-  return (MOODS as string[]).includes(word) ? (word as Mood) : 'mixed';
+  return word === 'negative' ? 'negative' : 'mixed';
 }
 
 export async function draftReply(review: string, mood: Mood, b: Business): Promise<string> {
