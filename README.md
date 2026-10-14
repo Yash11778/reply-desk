@@ -4,7 +4,7 @@ Paste your Google or Zomato reviews. An open-weight model running **in your brow
 sorts them, flags the ones you must deal with today, and drafts a reply to each one in
 your own voice. Your customers' words never leave your computer.
 
-**Live:** https://reply-desk.vercel.app
+**Live:** https://reply-desk-three.vercel.app
 
 Built for the [Hacktoberfest Open-Source AI Challenge, Week 2: Side Hustle](https://dev.to/challenges/hacktoberfest-week2-2026-10-12).
 
